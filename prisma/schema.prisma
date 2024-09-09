@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  fullName   String     // Full name of the user
+  email      String     @unique // Email (used for login)
+  password   String     // Password (hashed)
+  nip        String?    // Optional NIP (Nomor Identitas Pegawai Negeri Sipil)
+  anggarans  Anggaran[] // Relation to Anggaran model
+  histories  History[]  // Relation to History model
+}
+
+model Anggaran {
+  id             Int              @id @default(autoincrement())
+  kodeRekening   String           // Example: "5.1.02.02.01.0062"
+  uraian         String           // Title or description
+  koefisien      Int              // Can calculate with harga
+  satuan         String?          // Optional unit (Tahun, Orang, Bulan, etc.)
+  harga          BigInt           // Price as an integer (e.g., 12000000)
+  ppn            Float            @default(0) // Tax in percentage (e.g., "10%")
+  jumlah         BigInt           // Final calculated amount
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  userId         Int              // Foreign key from User model
+  user           User             @relation(fields: [userId], references: [id])
+  histories      History[]        // Relation to History model
+}
+
+model History {
+  id             Int       @id @default(autoincrement())
+  anggaranId     Int
+  userId         Int       // Foreign key to track who made the change
+  action         String    // "added", "edited", "deleted"
+  details        String    // Extra details on what was changed
+  timestamp      DateTime  @default(now()) // Date when action occurred
+  user           User      @relation(fields: [userId], references: [id])
+  anggaran       Anggaran  @relation(fields: [anggaranId], references: [id])
+}

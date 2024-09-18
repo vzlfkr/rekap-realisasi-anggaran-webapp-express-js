@@ -2,6 +2,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const app = express();  
 const prisma = new PrismaClient();
+const PORT = process.env.PORT;
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -9,6 +10,10 @@ const anggaranRoutes = require('./routes/anggaran');
 const historyRoutes = require('./routes/history');
 const authenticateToken = require('./middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 const calculateJumlah = (koefisien, harga, ppn) =>{
   const hargaAwal = koefisien * harga;
@@ -168,13 +173,4 @@ app.delete('/anggarans/:id', authenticateToken, async (req, res) => {
     console.log('Error:', error.message);
     res.status(500).json({ error: 'Failed to soft delete anggaran' });
   }
-});
-
-
-
-
-app.use('/history', historyRoutes);
-
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
 });

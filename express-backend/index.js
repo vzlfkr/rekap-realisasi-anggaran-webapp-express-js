@@ -6,8 +6,6 @@ const PORT = process.env.PORT;
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const anggaranRoutes = require('./routes/anggaran');
-const historyRoutes = require('./routes/history');
 const authenticateToken = require('./middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
 

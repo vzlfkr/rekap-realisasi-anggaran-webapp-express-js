@@ -105,49 +105,6 @@ const History = () => {
           <h2 className="mb-11 text-3xl font-bold text-gray-900">
             History Perubahan Data Anggaran
           </h2>
-
-          {/* Search Bar and Breadcrumbs Section */}
-          <div className="flex justify-between items-center">
-            {/* Left Side: Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                className="border rounded-lg px-4 py-2 text-sm w-64"
-                placeholder="Search..."
-              />
-              <button
-                type="button"
-                className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.293 12.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 111.414-1.414l3 3zm-4.95 5.664A8 8 0 1116 8a8 8 0 01-8.657 9.957z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            {/* Right Side: Breadcrumbs */}
-            <nav className="text-sm text-gray-600" aria-label="Breadcrumb">
-              <ol className="inline-flex space-x-1">
-                <li>
-                  <a href="#" className="text-gray-500 hover:text-gray-700">
-                    Home
-                  </a>
-                </li>
-                <li className="before:content-['/'] before:px-2">
-                  <span className="text-gray-400">Anggaran</span>
-                </li>
-              </ol>
-            </nav>
-          </div>
         </div>
 
         <div className="mt-[3%] overflow-x-auto">

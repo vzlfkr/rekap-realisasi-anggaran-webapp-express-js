@@ -37,12 +37,15 @@ app.use('/auth', authRoutes);
 //GET Anggaran
 app.get('/anggarans', async (req, res) => {
   try {
-    const anggarans = await prisma.anggaran.findMany();
+    const anggarans = await prisma.anggaran.findMany({
+      where: { deletedAt: null },
+    });
     res.json(anggarans);
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ message: 'Error fetching data' });
   }
 });
+
 
 // POST Anggaran
 app.post('/anggarans', authenticateToken, async (req, res) => {
@@ -74,7 +77,7 @@ app.post('/anggarans', authenticateToken, async (req, res) => {
         anggaranId: newAnggaran.id,
         userId: userId,
         action: 'added',
-        details: `Anggaran with uraian "${uraian}" was added.`
+        details: `Anggaran dengan uraian "${uraian}" berhasil ditambah.`
       }
     });
 
@@ -122,7 +125,7 @@ app.put('/anggarans/:id', authenticateToken, async (req, res) => {
         anggaranId: updatedAnggaran.id,
         userId: currentUserId,
         action: 'edited',
-        details: `Anggaran with uraian "${uraian}" was edited. Originally created by userId ${originalUserId}.`
+        details: `Anggaran dengan uraian "${uraian}" telah di Edit oleh User ID ${originalUserId}.`
       }
     });
 
@@ -161,7 +164,7 @@ app.delete('/anggarans/:id', authenticateToken, async (req, res) => {
         anggaranId: softDeletedAnggaran.id,
         userId: userId,
         action: 'deleted',
-        details: `Anggaran with uraian "${softDeletedAnggaran.uraian}" was soft deleted.`,
+        details: `Anggaran dengan uraian "${softDeletedAnggaran.uraian}" telah di Delete oleh User ID ${userId}.`,
       },
     });
 

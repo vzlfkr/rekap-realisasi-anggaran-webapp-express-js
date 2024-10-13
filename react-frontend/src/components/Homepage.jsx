@@ -1,6 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 const Home = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout(); // Clear token and log out
+    navigate("/login");
+  };
+
+
   return (
     <div className="relative grid grid-cols-1 gap-4 lg:grid-cols-5 lg:gap-8">
       <div className="h-32 rounded-lg bg-gray-200">
@@ -61,14 +72,12 @@ const Home = () => {
                     </li>
 
                     <li>
-                      <form action="#">
                         <button
-                          type="submit"
+                          onClick={handleLogout}
                           className="w-full rounded-lg px-4 py-2 text-sm font-medium text-red-300 [text-align:_inherit] hover:bg-gray-100 hover:text-red-600"
                         >
                           Log Out
                         </button>
-                      </form>
                     </li>
                   </ul>
                 </details>

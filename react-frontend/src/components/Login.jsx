@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useAuth } from "../AuthContext";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Adjust the path if necessary
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,22 +18,14 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await axios.post('http://localhost:5000/auth/login', {
         email,
-        password,
+        password
       });
-
       const token = response.data.token;
-      console.log("Token received:", token); // Log the token for debugging
-      localStorage.setItem("token", token);
-      
-      // Update authentication state
-      login();
-
-      // Redirect to the home page
-      navigate("/");
+      login(token); // Store the token
+      navigate('/'); // Redirect to homepage
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.error);

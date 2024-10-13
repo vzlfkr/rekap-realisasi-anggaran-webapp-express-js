@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const app = express();  
 const prisma = new PrismaClient();
 const PORT = process.env.PORT;
+const cors = require('cors');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -19,20 +20,18 @@ const calculateJumlah = (koefisien, harga, ppn) =>{
   return hargaAwal + pajak;
 };
 
-// // Extract token from the authorization header
-// const token = req.headers.authorization.split(' ')[1];
-    
-// // Decode token to extract user information
-// const decoded = jwt.verify(token, process.env.JWT_SECRET);  // Replace with your JWT secret
-// const userId = decoded.userId;  // Assuming 'id' is the field in your JWT token
-
 BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
+// Use CORS
+app.use(cors({
+origin: "http://localhost:3000"
+}));
+
 app.use(express.json());
 
-// Use routes
+// Use auth routes
 app.use('/auth', authRoutes);
 
 //GET Anggaran

@@ -14,11 +14,13 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-const calculateJumlah = (koefisien, harga, ppn) =>{
-  const hargaAwal = koefisien * harga;
-  const pajak = hargaAwal * (ppn/100);
-  return hargaAwal + pajak;
-};
+
+function calculateJumlah(koefisien, harga, ppn) {
+  const total = koefisien * harga;
+  const totalWithPpn = total + (total * ppn / 100);
+  return parseFloat(totalWithPpn); // Return as float
+}
+
 
 BigInt.prototype.toJSON = function () {
   return this.toString();
@@ -34,15 +36,31 @@ app.use(express.json());
 // Use auth routes
 app.use('/auth', authRoutes);
 
-//GET Anggaran
+// GET Anggaran
 app.get('/anggarans', async (req, res) => {
   try {
     const anggarans = await prisma.anggaran.findMany({
       where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' }, // Order by newest first
     });
     res.json(anggarans);
   } catch (error) {
+    console.error("Error fetching data:", error);
     res.status(500).json({ message: 'Error fetching data' });
+  }
+});
+
+// index.js or any file where routes are defined
+app.get('/history', async (req, res) => {
+  try {
+    const histories = await prisma.history.findMany({
+      orderBy: {
+        timestamp: 'desc', // Most recent first
+      },
+    });
+    res.json(histories);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch history data' });
   }
 });
 
@@ -88,6 +106,25 @@ app.post('/anggarans', authenticateToken, async (req, res) => {
   }
 });
 
+// GET anggaran by ID
+app.get('/anggarans/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Anggaran ID Fetch: ", id)
+    const anggaran = await prisma.anggaran.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!anggaran) {
+      return res.status(404).json({ error: 'Anggaran not found' });
+    }
+
+    res.json(anggaran);
+  } catch (error) {
+    console.error('Error fetching anggaran:', error);
+    res.status(500).json({ error: 'Failed to fetch anggaran' });
+  }
+});
 
 //PUT or UPDATE Anggaran Edit to History
 app.put('/anggarans/:id', authenticateToken, async (req, res) => {
@@ -125,7 +162,7 @@ app.put('/anggarans/:id', authenticateToken, async (req, res) => {
         anggaranId: updatedAnggaran.id,
         userId: currentUserId,
         action: 'edited',
-        details: `Anggaran dengan uraian "${uraian}" telah di Edit oleh User ID ${originalUserId}.`
+        details: `Anggaran dengan uraian "${uraian}" telah di Edit.`
       }
     });
 
@@ -164,7 +201,7 @@ app.delete('/anggarans/:id', authenticateToken, async (req, res) => {
         anggaranId: softDeletedAnggaran.id,
         userId: userId,
         action: 'deleted',
-        details: `Anggaran dengan uraian "${softDeletedAnggaran.uraian}" telah di Delete oleh User ID ${userId}.`,
+        details: `Anggaran dengan uraian "${softDeletedAnggaran.uraian}" telah di Delete.`,
       },
     });
 

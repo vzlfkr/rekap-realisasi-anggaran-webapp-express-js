@@ -3,18 +3,42 @@ import React, { createContext, useContext } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  
-  const login = (token) => {
-    console.log("Login token: ", token)
-    localStorage.setItem('token', token); // Store token in localStorage
+  // Function to check if the token is expired
+  // const isTokenExpired = () => {
+  //   const expirationTime = localStorage.getItem('tokenExpiration');
+  //   if (!expirationTime) return true;
+  //   return Date.now() >= parseInt(expirationTime);
+  // };
+
+  const login = (token, expiresAt) => {
+    console.log("Login token: ", token);
+    console.log("Login expiresAt: ", expiresAt);
+    localStorage.setItem('token', token); 
+    localStorage.setItem('tokenExpiry', expiresAt); // Store server-side expiration time
   };
+
 
   const logout = () => {
     localStorage.removeItem('token'); // Clear token from localStorage
+    localStorage.removeItem('tokenExpiry'); // Clear expiration time
   };
 
   const isAuthenticated = () => {
-    return !!localStorage.getItem('token'); // Return true if token exists
+    const token = localStorage.getItem('token');
+    const tokenExpiry = localStorage.getItem('tokenExpiry');
+  
+    if (!token || !tokenExpiry) {
+      return false;
+    }
+  
+    const localTimeNow = Date.now(); // Current local time in milliseconds
+  
+    if (localTimeNow >= tokenExpiry) {
+      logout(); // Token is expired, log out
+      return false;
+    }
+  
+    return true; // Token is still valid
   };
 
   return (

@@ -16,16 +16,22 @@ const Login = () => {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/auth/login', {
         email,
         password
       });
-      const token = response.data.token;
-      login(token); // Store the token
-      navigate('/'); // Redirect to homepage
+  
+      const { token, expiresAt } = response.data; // Extract token and expiration date from the response
+      console.log("Token:", token);
+      console.log("Expires At:", expiresAt); // Log for debugging
+  
+      // Call the login function and pass both token and expiresAt
+      login(token, expiresAt); 
+  
+      navigate('/'); // Redirect to homepage after successful login
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.error);
@@ -34,6 +40,7 @@ const Login = () => {
       }
     }
   };
+  
 
   return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
@@ -44,7 +51,7 @@ const Login = () => {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="mx-auto mb-0 mt-8 max-w-md space-y-4">
+        <form onSubmit={handleLogin} className="mx-auto mb-0 mt-8 max-w-md space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">Email</label>
             <div className="relative">

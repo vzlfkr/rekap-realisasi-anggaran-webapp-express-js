@@ -4,11 +4,21 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT;
 const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 // Import routes
 const authRoutes = require('./routes/auth');
 const authenticateToken = require('./middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
+
+// Check if the uploads folder exists, if not, create it
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('Uploads folder created.');
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
@@ -211,3 +221,54 @@ app.delete('/anggarans/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to soft delete anggaran' });
   }
 });
+
+// Profile Image Upload
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Folder where images will be stored
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage });
+
+// Route to update user profile (including image)
+app.put('/profile', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { fullName, nip, email } = req.body;
+    let imageUrl = null;
+
+    // Check if a new image is uploaded
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
+    // Set NIP to null if it's an empty string or explicitly passed as "null"
+    const nipValue = !nip || nip === "null" || nip.trim() === "" ? null : nip;
+
+    // Update user profile
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        fullName,
+        nip: nipValue,  // Ensure that NIP is null if it's empty or "null"
+        email,
+        imageUrl: imageUrl || undefined, // Only update imageUrl if new image is uploaded
+      },
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating profile:', error.message);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+
+
+// USE Profile Image
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

@@ -19,9 +19,11 @@ model User {
   email      String     @unique // Email (used for login)
   password   String     // Password (hashed)
   nip        String?    // Optional NIP (Nomor Identitas Pegawai Negeri Sipil)
+  imageUrl   String?    // Optional field for storing profile image URL
   anggarans  Anggaran[] // Relation to Anggaran model
   histories  History[]  // Relation to History model
 }
+
 
 model Anggaran {
   id             Int              @id @default(autoincrement())

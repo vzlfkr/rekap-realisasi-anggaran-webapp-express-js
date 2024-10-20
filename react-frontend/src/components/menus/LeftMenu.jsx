@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import { useAuth } from "../../AuthContext";
 
 const LeftMenu = () => {
@@ -7,10 +8,30 @@ const LeftMenu = () => {
   const location = useLocation(); // Detects the current route
   const { logout } = useAuth();
 
+  const [userData, setUserData] = useState({
+    fullName: "",
+    email: "",
+    imageUrl: "",
+  });
+
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  // Fetch current user data on component mount
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/auth/me", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setUserData(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch user data:", error);
+      });
+  }, []);
 
   return (
     <div className="h-32 rounded-lg bg-gray-200">
@@ -50,7 +71,6 @@ const LeftMenu = () => {
               </a>
             </li>
             <li>
-              {/* Conditionally open the details tag based on the current route */}
               <details
                 className="group [&_summary::-webkit-details-marker]:hidden"
                 open={location.pathname === "/profile"}
@@ -104,14 +124,18 @@ const LeftMenu = () => {
             className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50"
           >
             <img
-              alt=""
-              src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+              alt="Profile"
+              src={
+                userData.imageUrl
+                  ? `http://localhost:5000${userData.imageUrl}`
+                  : "default_image_url"
+              }
               className="size-10 rounded-full object-cover"
             />
             <div>
               <p className="text-xs">
-                <strong className="block font-medium">Eric Frusciante</strong>
-                <span> eric@frusciante.com </span>
+                <strong className="block font-medium">{userData.fullName}</strong>
+                <span>{userData.email}</span>
               </p>
             </div>
           </a>

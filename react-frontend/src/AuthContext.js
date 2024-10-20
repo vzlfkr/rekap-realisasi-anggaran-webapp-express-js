@@ -3,13 +3,6 @@ import React, { createContext, useContext } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Function to check if the token is expired
-  // const isTokenExpired = () => {
-  //   const expirationTime = localStorage.getItem('tokenExpiration');
-  //   if (!expirationTime) return true;
-  //   return Date.now() >= parseInt(expirationTime);
-  // };
-
   const login = (token, expiresAt) => {
     console.log("Login token: ", token);
     console.log("Login expiresAt: ", expiresAt);

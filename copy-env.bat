@@ -1,5 +1,5 @@
 @echo off
-echo Copying .env.example to .env...
-copy .env.example .env
-echo .env file created!
+echo Copying .env.example to .env in express-backend...
+copy express-backend\.env.example express-backend\.env
+echo .env file created in express-backend!
 pause

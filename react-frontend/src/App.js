@@ -9,6 +9,8 @@ import Profile from './components/Profile';
 import AddAnggaran from './components/AddAnggaran';
 import EditAnggaran from './components/EditAnggaran';
 import Register from './components/Register';
+import ListAmbilAnggaran from './components/ListAmbilAnggaran';
+import AmbilAnggaran from './components/AmbilAnggaran';
 
 const useTokenExpirationChecker = () => {
   const { logout } = useAuth();
@@ -45,6 +47,8 @@ const MainApp = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      <Route path="/ambil" element={<ProtectedRoute><ListAmbilAnggaran /></ProtectedRoute>} />
+      <Route path="/ambil/:id" element={<ProtectedRoute><AmbilAnggaran /></ProtectedRoute>} />
       <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
       <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>}/>
       <Route path='/anggarans/add' element={<ProtectedRoute><AddAnggaran /></ProtectedRoute>}/>

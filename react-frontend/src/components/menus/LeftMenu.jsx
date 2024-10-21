@@ -55,7 +55,20 @@ const LeftMenu = () => {
                     : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                 }`}
               >
-                Anggaran
+                List Anggaran
+              </a>
+            </li>
+            <li>
+              <a
+                href="/ambil"
+                className={`block rounded-lg px-4 py-2 text-sm font-medium ${
+                  location.pathname === "/ambil" ||
+                  location.pathname.startsWith("/anggarans")
+                    ? "bg-gray-100 text-gray-700"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                }`}
+              >
+                Ambil Anggaran
               </a>
             </li>
             <li>
@@ -128,7 +141,7 @@ const LeftMenu = () => {
               src={
                 userData.imageUrl
                   ? `http://localhost:5000${userData.imageUrl}`
-                  : "default_image_url"
+                  : "/images/profilePlaceholder.svg"
               }
               className="size-10 rounded-full object-cover"
             />

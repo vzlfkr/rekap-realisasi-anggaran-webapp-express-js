@@ -11,7 +11,6 @@ const fs = require('fs');
 // Import routes
 const authRoutes = require('./routes/auth');
 const authenticateToken = require('./middleware/authMiddleware');
-const jwt = require('jsonwebtoken');
 
 // Check if the uploads folder exists, if not, create it
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -332,8 +331,6 @@ app.put('/profile', authenticateToken, upload.single('image'), async (req, res) 
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
-
-
 
 // USE Profile Image
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

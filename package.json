@@ -1,10 +1,13 @@
 {
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.12"
   },
-  "dependencies": {
-    "flowbite-react": "^0.10.1"
-  }
+  "scripts": {
+  "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+  "start-backend": "cd express-backend && node index.js",
+  "start-frontend": "cd react-frontend && npm start"
+}
 }

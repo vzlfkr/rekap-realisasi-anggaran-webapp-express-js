@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useAuth } from "../AuthContext";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Adjust the path if necessary
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,24 +16,22 @@ const Login = () => {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await axios.post('http://localhost:5000/auth/login', {
         email,
-        password,
+        password
       });
-
-      const token = response.data.token;
-      console.log("Token received:", token); // Log the token for debugging
-      localStorage.setItem("token", token);
-      
-      // Update authentication state
-      login();
-
-      // Redirect to the home page
-      navigate("/");
+  
+      const { token, expiresAt } = response.data; // Extract token and expiration date from the response
+      console.log("Token:", token);
+      console.log("Expires At:", expiresAt); // Log for debugging
+  
+      // Call the login function and pass both token and expiresAt
+      login(token, expiresAt); 
+  
+      navigate('/'); // Redirect to homepage after successful login
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.error);
@@ -42,6 +40,7 @@ const Login = () => {
       }
     }
   };
+  
 
   return (
     <section className="relative flex flex-wrap lg:h-screen lg:items-center">
@@ -52,7 +51,7 @@ const Login = () => {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="mx-auto mb-0 mt-8 max-w-md space-y-4">
+        <form onSubmit={handleLogin} className="mx-auto mb-0 mt-8 max-w-md space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">Email</label>
             <div className="relative">
@@ -131,8 +130,8 @@ const Login = () => {
       <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
         <img
           alt=""
-          src="https://images.unsplash.com/photo-1630450202872-e0829c9d6172?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
-          className="absolute inset-0 h-full w-full object-cover"
+          src="/images/loginBanner.jpg"
+          className="absolute inset-0 h-full w-full object-contain"
         />
       </div>
     </section>

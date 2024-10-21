@@ -19,9 +19,11 @@ model User {
   email      String     @unique // Email (used for login)
   password   String     // Password (hashed)
   nip        String?    // Optional NIP (Nomor Identitas Pegawai Negeri Sipil)
+  imageUrl   String?    // Optional field for storing profile image URL
   anggarans  Anggaran[] // Relation to Anggaran model
   histories  History[]  // Relation to History model
 }
+
 
 model Anggaran {
   id             Int              @id @default(autoincrement())
@@ -31,7 +33,7 @@ model Anggaran {
   satuan         String?          // Optional unit (Tahun, Orang, Bulan, etc.)
   harga          BigInt           // Price as an integer (e.g., 12000000)
   ppn            Float            @default(0) // Tax in percentage (e.g., "10%")
-  jumlah         BigInt           // Final calculated amount
+  jumlah         Float            // Final calculated amount (use Float for decimal values)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?        // Optional field to mark deletion timestamp
@@ -39,6 +41,7 @@ model Anggaran {
   user           User             @relation(fields: [userId], references: [id])
   histories      History[]        // Relation to History model
 }
+
 
 
 model History {
